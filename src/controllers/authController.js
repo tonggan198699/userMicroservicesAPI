@@ -5,28 +5,29 @@ const jwt = require('jsonwebtoken');
 const { mongooseUserModel } = require('../database/mongooseConnection.js');
 const emailService = require('../services/emailService.js');
 const asyncHandler = require('../helpers/asyncRouteWrapper');
+const User = require('../models/user.js');
 
 // send activation email passing both the email and id in the email content
 const sendActivationEmail = async ({_id, email}) => {
 
     const data = {
-        from: process.env.EMAIL_USER_NAME, 
-        to: email, 
+        from: process.env.EMAIL_USER_NAME,
+        to: email,
         subject: `Your Activation Link for ${email}`,
         text: `Please use the following link within the next 10 minutes to activate your account`,
         html: `<p>Please use the following link within the next 10 minutes to activate your account: <strong><a href="${process.env.BASE_URL}/verifyAccount?id=${_id}" target="_blank">Click here to verify your account</a></strong></p>`,
     };
-    
-    await new Promise ((resolve, reject) => {emailService.sendMail(data, function(error, info)
-        {
-            if(error){
-                console.log(error);
-                return reject(error)
-            }
 
-            console.log('Message sent: ' + info.response);
-            return resolve();
-        });
+    await new Promise ((resolve, reject) => {emailService.sendMail(data, function(error, info)
+    {
+        if(error){
+            console.log(error);
+            return reject(error)
+        }
+
+        console.log('Message sent: ' + info.response);
+        return resolve();
+    });
     });
 
 };
@@ -36,15 +37,13 @@ const registerNewUser = asyncHandler(async(req, res, next) => {
 
     try {
 
-        let User = mongooseUserModel();
-
         const { firstName, lastName, email, password } = req.body;
-    
+
         // Validate user input
         if (!(email && password && firstName && lastName)) {
-          return res.status(400).send({
+            return res.status(400).send({
                 message: "All input is required for the registration process"
-          });
+            });
         }
 
         // check if user is already regiter with email
@@ -85,10 +84,10 @@ const registerNewUser = asyncHandler(async(req, res, next) => {
     }catch(error){
 
         console.log(error.message);
-        logStream.write(`Error: ${error.message}`)  
+        logStream.write(`Error: ${error.message}`)
         next(error)
 
-    }  
+    }
 
 });
 
@@ -101,36 +100,36 @@ const resendActivationEmail = asyncHandler(async(req, res, next) => {
         let User = mongooseUserModel();
 
         const { email } = req.body;
- 
-          // check if user is already regiter with email
-          const user = await User.findOne({ email });
 
-          if(user.status === 'active'){
+        // check if user is already regiter with email
+        const user = await User.findOne({ email });
+
+        if(user.status === 'active'){
             return res.status(409).send({
                 message: "User has been registered! Please login!"
-            });        
-          }
+            });
+        }
 
-          if(user){
+        if(user){
 
             let _id = user._id;
 
-                // send activation email after the first time after checking the user status is pending
-                if(user.status === 'pending'){
-                        sendActivationEmail({email,_id})
-                        .then(() => console.log('Successfully sent activation email'))
-                        .catch(console.log)
-                }
-             
-          }
+            // send activation email after the first time after checking the user status is pending
+            if(user.status === 'pending'){
+                sendActivationEmail({email,_id})
+                    .then(() => console.log('Successfully sent activation email'))
+                    .catch(console.log)
+            }
+
+        }
 
     }catch(error){
-        
+
         console.log(error.message);
-        logStream.write(`Error: ${error.message}`)  
+        logStream.write(`Error: ${error.message}`)
         next(error)
-        
-    } 
+
+    }
 
 });
 
@@ -166,7 +165,7 @@ const userLogin = async(req, res, next) => {
             // Create token
             const token = jwt.sign(
                 { user_id: user._id, email },
-                    process.env.ACEESS_TOKEN_SECRET,
+                process.env.ACEESS_TOKEN_SECRET,
                 {
                     expiresIn: "2h",
                 }
@@ -179,18 +178,18 @@ const userLogin = async(req, res, next) => {
             res.status(200).json(user);
 
         }else{
-            throw new Error('Your credentials could not be verified! Please makes sure that you have entered the correct email and password!'); 
+            throw new Error('Your credentials could not be verified! Please makes sure that you have entered the correct email and password!');
         }
 
     }catch(error){
 
         console.log(error.message);
-        logStream.write(`Error: ${error.message}`)  
+        logStream.write(`Error: ${error.message}`)
         next(error)
 
-    }  
+    }
 
-};    
+};
 
 module.exports = {
     registerNewUser,

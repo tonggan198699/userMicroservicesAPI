@@ -1,10 +1,11 @@
 const { mongooseUserModel } = require('../database/mongooseConnection.js');
 const asyncHandler = require('../helpers/asyncRouteWrapper');
+const User = require('../models/user.js');
 
 // update the sentActivationLinkAt to now timestamp
 module.exports = asyncHandler(async (req, res, next) => {
 
-    let User = mongooseUserModel();
+    //let User = mongooseUserModel();
 
     let user = await User.findById(req.query.id);
     
