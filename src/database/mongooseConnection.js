@@ -1,8 +1,7 @@
 require('dotenv').config()
 const mongoose = require('mongoose');
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const { UserSchema } = require('../models/user.js');
-//const {run} = require("nodemon/lib/monitor");
+const {run} = require("nodemon/lib/monitor");
 
 const mongooseConnection = async() => {
 
@@ -20,7 +19,6 @@ const mongooseConnection = async() => {
     );
 
 }
-
 
 const mongooseUserModel = () => {
     const User = mongoose.model('User', UserSchema);

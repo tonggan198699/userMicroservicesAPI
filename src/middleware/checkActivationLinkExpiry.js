@@ -1,4 +1,3 @@
-const { mongooseUserModel } = require('../database/mongooseConnection.js');
 const asyncHandler = require('../helpers/asyncRouteWrapper');
 const User = require('../models/user.js');
 
@@ -22,7 +21,7 @@ module.exports = asyncHandler(async (req, res, next) => {
         throw new Error('Your activation link has expired after 10 minutes! Please request for an activation link resend!')
     }else{
         // updates the status to active 
-        await User.findOneAndUpdate({email: user.email}, {status: 'active'}, { new: true, useFindAndModify: false });
+        await User.findOneAndUpdate({email: user.email}, {status: 'verified'}, { new: true, useFindAndModify: false });
     }
 
 });

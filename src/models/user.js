@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 require('dotenv').config()
 
 if(process.env.DB_CHOICE === 'mongoose'){
@@ -12,7 +11,7 @@ if(process.env.DB_CHOICE === 'mongoose'){
         lastName: String,
         email: String,
         password: String,
-        status: String,
+        status: { type: String, default: 'inactive'},
         token: String,
         sentActivationLinkAt: { type: Date, default: Date.now },
         createdDate: { type: Date, default: Date.now }

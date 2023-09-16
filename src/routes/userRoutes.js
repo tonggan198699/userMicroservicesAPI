@@ -7,9 +7,9 @@ const authenticateToken = require('../middleware/authenticateToken.js');
 
 
 // get all users
-router.get('/user', [
-    logMiddleware, 
-    authenticateToken, 
+router.get('/users', [
+    logMiddleware,
+    authenticateToken,
     userController.getUser
 ]);
 
@@ -18,6 +18,13 @@ router.get('/user/:userId', [
     logMiddleware,
     authenticateToken,
     userController.getUserWithId
+]);
+
+// update a user with Email
+router.get('/user/', [
+    logMiddleware,
+    authenticateToken,
+    userController.getUserWithEmail
 ]);
 
 // update a user with ID
