@@ -5,7 +5,6 @@ const router = express.Router();
 const logMiddleware = require('../middleware/logMiddleware.js');
 const authenticateToken = require('../middleware/authenticateToken.js');
 
-
 // get all users
 router.get('/users', [
     logMiddleware,

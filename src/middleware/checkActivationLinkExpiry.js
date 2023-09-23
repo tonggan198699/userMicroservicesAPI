@@ -20,8 +20,8 @@ module.exports = asyncHandler(async (req, res, next) => {
     if(currentDateTime > maxTime){
         throw new Error('Your activation link has expired after 10 minutes! Please request for an activation link resend!')
     }else{
-        // updates the status to active 
-        await User.findOneAndUpdate({email: user.email}, {status: 'verified'}, { new: true, useFindAndModify: false });
+        // updates user based on verification
+        await User.findOneAndUpdate({email: user.email}, {status: user.status}, { new: true, useFindAndModify: false });
     }
 
 });

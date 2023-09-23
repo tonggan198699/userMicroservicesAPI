@@ -1,5 +1,6 @@
 const asyncHandler = require('../helpers/asyncRouteWrapper');
 const User = require('../models/user.js');
+const Verification = require('../models/verification.js');
 
 // update the sentActivationLinkAt to now timestamp
 module.exports = asyncHandler(async (req, res, next) => {
@@ -7,10 +8,16 @@ module.exports = asyncHandler(async (req, res, next) => {
     let user = await User.findById(req.query.id);
     
     if(user){
+
+        let verification = Verification.findById(user._id);
+        let verifiedStatus = !!verification;
+
         user = await User.findOneAndUpdate
         (
             {email: user.email},
-            {sentActivationLinkAt: Date.now(), status: 'verified'},
+            {sentActivationLinkAt: Date.now(),
+                status: verifiedStatus ? 'active' : 'inactive'
+            },
             { new: true, useFindAndModify: false}
         );
     }
