@@ -6,8 +6,9 @@ require('dotenv').config()
 
 const app = express();
 
-// db config 
-if(process.env.DB_CHOICE === 'mongoose'){
+// db config
+const db = process.env.DB_CHOICE || 'mongoose';
+if(db){
     mongooseConnection();
 }
 

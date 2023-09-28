@@ -2,7 +2,7 @@ require('dotenv').config()
 const logStream = require('../services/logger.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const emailService = require('../services/emailService.js');
+const sendEmail = require('../services/emailService.js');
 const asyncHandler = require('../helpers/asyncRouteWrapper');
 const User = require('../models/user.js');
 const Verification = require('../models/verification.js');
@@ -18,26 +18,19 @@ const sendActivationEmail = async ({_id, email}) => {
         html: `<p>Please use the following link within the next 10 minutes to activate your account: <strong><a href="${process.env.BASE_URL}/verifyAccount?id=${_id}" target="_blank">Click here to verify your account</a></strong></p>`,
     };
 
-    await new Promise ((resolve, reject) => {emailService.sendMail(data, async function (error, info) {
-        if (error) {
-            console.log(error);
-            return reject(error)
-        }
+    const sent = sendEmail(data);
 
-        // check if user is already regiter with email
-        const user = await User.findOne({email});
+    if (!sent) {
+        throw new Error('Email cannot be sent!');
+    }
 
-        await Verification.create({
-            user_id: user._id,
-            verified: false,
-            email: user.email,
-        });
+    const user = await User.findOne({email});
 
-        console.log('Message sent: ' + info.response);
-        return resolve();
+    await Verification.create({
+        user_id: user._id,
+        verified: false,
+        email: user.email,
     });
-    });
-
 };
 
 // register a new user

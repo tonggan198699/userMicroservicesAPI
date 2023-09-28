@@ -10,4 +10,13 @@ const emailService = nodemailer.createTransport({
     }
 });
 
-module.exports = emailService;
+async function sendEmail (data) {
+    emailService.sendMail(data, function(error, info) {
+        if (error) {
+            console.log(error);
+        }
+        console.log('Message sent: ' + info.response);
+    });
+}
+
+module.exports = sendEmail;
